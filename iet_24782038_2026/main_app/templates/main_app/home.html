@@ -2,52 +2,27 @@
 <html>
 <head>
     <title>Home</title>
-    <style>
-        body{
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            text-align: center;
-            margin: 0;
-        }
-
-        .container{
-            margin-top: 100px;
-        }
-
-        h1{
-            color: #2c3e50;
-        }
-
-        p{
-            color: #555;
-        }
-
-        a{
-            text-decoration: none;
-            background-color: #3498db;
-            color: white;
-            padding: 10px 20px;
-            margin: 10px;
-            border-radius: 5px;
-        }
-
-        a:hover{
-            background-color: #2980b9;
-        }
-    </style>
 </head>
-
 <body>
+    <h1>Daftar Laporan</h1>
 
-<div class="container">
-    <h1>Selamat Datang di Halaman Utama</h1>
-    <p>Informasi saya.</p>
+    <a href="{% url 'add_report' %}">Tambah Laporan</a>
 
-    <br>
+    <hr>
 
-    <a href="/about/">Halaman About</a>
-    <a href="/contacts/">Halaman Contacts</a>
-</div>
+    {% for report in reports %}
+        <h3>{{ report.title }}</h3>
+        <p>Category: {{ report.category }}</p>
+        <p>Description: {{ report.description }}</p>
+        <p>Location: {{ report.location }}</p>
+        <p>Status: {{ report.status }}</p>
 
+        <a href="{% url 'edit_report' report.id %}">Edit</a>
+        <a href="{% url 'delete_report' report.id %}">Delete</a>
+
+        <hr>
+    {% empty %}
+        <p>Belum ada laporan.</p>
+    {% endfor %}
 </body>
 </html>
