@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart City Reporting - Tanggamus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8fb;
+            color: #1f2937;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0b6e4f, #1d4ed8);
+            color: white;
+            text-align: center;
+            padding: 70px 20px 90px;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .hero .subtext {
+            font-size: 15px;
+            opacity: 0.95;
+        }
+
+        .main-content {
+            max-width: 900px;
+            margin: -45px auto 40px;
+            padding: 0 20px;
+        }
+
+        .welcome-card {
+            background: white;
+            border-radius: 24px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .welcome-card h2 {
+            font-size: 32px;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .welcome-card p {
+            color: #475569;
+            font-size: 17px;
+            margin-bottom: 25px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            display: inline-block;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: #0f766e;
+        }
+
+        .btn-primary:hover {
+            background: #0b5f59;
+        }
+
+        .btn-secondary {
+            background: #2563eb;
+        }
+
+        .btn-secondary:hover {
+            background: #1d4ed8;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <section class="hero">
+        <h1>Smart City Reporting</h1>
+        <p>Kabupaten Tanggamus</p>
+        <div class="subtext">
+            Layanan pelaporan masyarakat untuk kota yang cepat, tanggap, dan nyaman
+        </div>
+    </section>
+
+    <div class="main-content">
+        <div class="welcome-card">
+            <h2>Selamat Datang 👋</h2>
+            <p>
+                Sampaikan laporan infrastruktur, lingkungan, jaringan, dan berbagai masalah publik lainnya dengan mudah.
+            </p>
+
+            <div class="button-group">
+                <a href="{% url 'report_list' %}" class="btn btn-primary">Lihat Laporan</a>
+                <a href="{% url 'add_report' %}" class="btn btn-secondary">Tambah Laporan</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            © 2026 Smart City Reporting Kabupaten Tanggamus
+        </div>
+    </div>
+
+</body>
+</html>

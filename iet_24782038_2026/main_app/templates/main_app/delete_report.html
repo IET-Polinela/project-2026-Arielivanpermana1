@@ -1,19 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hapus Laporan</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            margin: 0;
+            background: linear-gradient(to right, #fff1f2, #ffe4e6);
+        }
+        .container {
+            max-width: 550px;
+            margin: 70px auto;
+            background: white;
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #b91c1c;
+            margin-bottom: 20px;
+        }
+        p {
+            margin-bottom: 18px;
+            font-size: 16px;
+        }
+        .title {
+            font-weight: bold;
+            color: #0f172a;
+        }
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn-delete {
+            background: #dc2626;
+            color: white;
+        }
+        .btn-cancel {
+            background: #e5e7eb;
+            color: #111827;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hapus Laporan</h1>
+    <div class="container">
+        <h1>Hapus Laporan</h1>
+        <p>Apakah yakin ingin menghapus laporan ini?</p>
+        <p class="title">{{ object.title }}</p>
 
-    <p>Apakah yakin ingin menghapus laporan ini?</p>
-    <p><strong>{{ report.title }}</strong></p>
-
-    <form method="POST">
-        {% csrf_token %}
-        <button type="submit">Ya, Hapus</button>
-    </form>
-
-    <a href="{% url 'home' %}">Batal</a>
+        <form method="post">
+            {% csrf_token %}
+            <div class="button-group">
+                <button type="submit" class="btn btn-delete">Ya, Hapus</button>
+                <a href="{% url 'report_list' %}" class="btn btn-cancel">Batal</a>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
