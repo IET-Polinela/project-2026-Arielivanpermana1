@@ -1,107 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Laporan</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
-            margin: 0;
-            background: linear-gradient(to right, #eef2f7, #d9e7ff);
-        }
-        .container {
-            width: 100%;
-            max-width: 650px;
-            margin: 50px auto;
-            background: white;
-            padding: 32px;
-            border-radius: 18px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #1f3c88;
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 18px;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        input, textarea, select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            font-size: 14px;
-        }
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        .button-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-        }
-        .btn {
-            padding: 12px 18px;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .btn-save {
-            background-color: #1f3c88;
-            color: white;
-        }
-        .btn-back {
-            background-color: #e5e7eb;
-            color: #111827;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Tambah Laporan</h1>
+{% extends 'base.html' %}
 
-        <form method="post">
+{% block title %}Tambah Laporan{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'landing' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Tambah Laporan</li>
+    </ol>
+</nav>
+
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-4">
+        <h2 class="mb-4">Tambah Laporan</h2>
+
+        <form method="post" class="loading-form">
             {% csrf_token %}
 
-            <div class="form-group">
-                <label for="id_title">Title</label>
+            <div class="mb-3">
+                <label for="id_title" class="form-label">Title</label>
                 {{ form.title }}
             </div>
 
-            <div class="form-group">
-                <label for="id_category">Category</label>
+            <div class="mb-3">
+                <label for="id_category" class="form-label">Category</label>
                 {{ form.category }}
             </div>
 
-            <div class="form-group">
-                <label for="id_description">Description</label>
+            <div class="mb-3">
+                <label for="id_description" class="form-label">Description</label>
                 {{ form.description }}
             </div>
 
-            <div class="form-group">
-                <label for="id_location">Location</label>
+            <div class="mb-3">
+                <label for="id_location" class="form-label">Location</label>
                 {{ form.location }}
             </div>
 
-            <div class="button-group">
-                <button type="submit" class="btn btn-save">Simpan</button>
-                <a href="{% url 'report_list' %}" class="btn btn-back">Kembali</a>
-            </div>
+            <button type="submit" class="btn btn-primary loading-btn">Submit</button>
+            <a href="{% url 'report_list' %}" class="btn btn-secondary">Kembali</a>
         </form>
     </div>
-</body>
-</html>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("input, textarea, select").forEach(el => {
+        el.classList.add("form-control");
+    });
+});
+</script>
+{% endblock %}

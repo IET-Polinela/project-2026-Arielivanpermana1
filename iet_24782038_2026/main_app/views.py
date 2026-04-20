@@ -2,6 +2,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views import View
 from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 from .models import Report
 
 
@@ -27,6 +28,10 @@ class ReportCreateView(CreateView):
     template_name = 'main_app/add_report.html'
     success_url = reverse_lazy('report_list')
 
+    def form_valid(self, form):
+        messages.success(self.request, "Laporan berhasil ditambahkan.")
+        return super().form_valid(form)
+
 
 class ReportUpdateView(UpdateView):
     model = Report
@@ -34,11 +39,19 @@ class ReportUpdateView(UpdateView):
     template_name = 'main_app/edit_report.html'
     success_url = reverse_lazy('report_list')
 
+    def form_valid(self, form):
+        messages.success(self.request, "Laporan berhasil diperbarui.")
+        return super().form_valid(form)
+
 
 class ReportDeleteView(DeleteView):
     model = Report
     template_name = 'main_app/delete_report.html'
     success_url = reverse_lazy('report_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Laporan berhasil dihapus.")
+        return super().form_valid(form)
 
 
 class ReportUpdateStatusView(View):
@@ -48,10 +61,13 @@ class ReportUpdateStatusView(View):
 
         if report.status == 'REPORTED' and new_status == 'VERIFIED':
             report.status = 'VERIFIED'
+            messages.success(request, "Status berhasil diubah ke VERIFIED.")
         elif report.status == 'VERIFIED' and new_status == 'IN_PROGRESS':
             report.status = 'IN_PROGRESS'
+            messages.success(request, "Status berhasil diubah ke IN_PROGRESS.")
         elif report.status == 'IN_PROGRESS' and new_status == 'RESOLVED':
             report.status = 'RESOLVED'
+            messages.success(request, "Status berhasil diubah ke RESOLVED.")
 
         report.save()
         return redirect('report_list')
