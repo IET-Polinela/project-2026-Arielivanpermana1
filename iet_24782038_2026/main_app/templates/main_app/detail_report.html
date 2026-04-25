@@ -34,7 +34,10 @@
         <p><strong>Dibuat pada:</strong> {{ report.created_at }}</p>
 
         <a href="{% url 'report_list' %}" class="btn btn-secondary">Kembali</a>
+
         <a href="{% url 'edit_report' report.id %}" class="btn btn-warning text-dark">Edit</a>
+
+        <a href="{% url 'delete_report' report.id %}" class="btn btn-danger">Hapus</a>
     </div>
 </div>
 {% endblock %}
