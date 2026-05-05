@@ -3,6 +3,8 @@ from django.views.generic import TemplateView, ListView, DetailView, CreateView,
 from django.views import View
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
+from django.http import JsonResponse
+from django.db.models import Q
 from .models import Report
 
 
@@ -27,6 +29,7 @@ class ReportListView(ListView):
     model = Report
     template_name = 'main_app/home.html'
     context_object_name = 'reports'
+    ordering = ['-created_at']
 
 
 class ReportDetailView(DetailView):
@@ -86,3 +89,41 @@ class ReportUpdateStatusView(AdminRequiredMixin, View):
 
         report.save()
         return redirect('report_list')
+
+
+def live_search_reports(request):
+    keyword = request.GET.get('q', '')
+
+    reports = Report.objects.filter(
+        Q(title__icontains=keyword) |
+        Q(category__icontains=keyword) |
+        Q(location__icontains=keyword) |
+        Q(status__icontains=keyword)
+    ).order_by('-created_at')
+
+    data = []
+
+    for report in reports:
+        data.append({
+            'id': report.id,
+            'title': report.title,
+            'category': report.category,
+            'location': report.location,
+            'status': report.status,
+        })
+
+    return JsonResponse({'reports': data})
+
+
+def report_detail_json(request, pk):
+    report = get_object_or_404(Report, pk=pk)
+
+    return JsonResponse({
+        'id': report.id,
+        'title': report.title,
+        'category': report.category,
+        'description': report.description,
+        'location': report.location,
+        'status': report.status,
+        'created_at': report.created_at.strftime('%d %B %Y %H:%M'),
+    })

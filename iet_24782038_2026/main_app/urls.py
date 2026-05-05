@@ -7,6 +7,8 @@ from .views import (
     ReportUpdateView,
     ReportDeleteView,
     ReportUpdateStatusView,
+    live_search_reports,
+    report_detail_json,
 )
 
 urlpatterns = [
@@ -17,4 +19,7 @@ urlpatterns = [
     path('edit/<int:pk>/', ReportUpdateView.as_view(), name='edit_report'),
     path('delete/<int:pk>/', ReportDeleteView.as_view(), name='delete_report'),
     path('update-status/<int:pk>/', ReportUpdateStatusView.as_view(), name='update_status'),
+
+    path('ajax/live-search/', live_search_reports, name='live_search_reports'),
+    path('ajax/report-detail/<int:pk>/', report_detail_json, name='report_detail_json'),
 ]

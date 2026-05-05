@@ -49,6 +49,12 @@
                 </li>
 
                 <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">
+                        <i class="bi bi-bar-chart"></i> Dashboard
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a class="nav-link" href="/about/">
                         <i class="bi bi-info-circle"></i> About
                     </a>
@@ -61,12 +67,6 @@
                 </li>
 
                 {% if user.is_authenticated %}
-
-                    <li class="nav-item">
-                        <a href="{% url 'add_report' %}" class="btn btn-light btn-sm text-primary fw-semibold">
-                            <i class="bi bi-plus-circle"></i> Add Report
-                        </a>
-                    </li>
 
                     <li class="nav-item">
                         <span class="nav-user-badge d-flex align-items-center gap-2 px-3 py-1 bg-white text-primary rounded-pill shadow-sm fw-semibold">
