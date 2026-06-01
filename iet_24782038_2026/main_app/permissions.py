@@ -1,16 +1,38 @@
-from rest_framework import permissions
+from rest_framework.permissions import BasePermission
 
 
-class IsOwnerAndDraftOrReadOnly(permissions.BasePermission):
+class IsOwnerAndDraftOrReadOnly(
+    BasePermission
+):
 
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(
+        self,
+        request,
+        view,
+        obj
+    ):
 
-        # GET aman untuk semua user login
-        if request.method in permissions.SAFE_METHODS:
+        # GET aman
+        if request.method in [
+            "GET",
+            "HEAD",
+            "OPTIONS"
+        ]:
             return True
 
-        # PUT DELETE hanya owner dan status DRAFT
+        # ADMIN boleh semua
+        if request.user.is_admin:
+            return True
+
+        # CITIZEN:
+        # hanya milik sendiri
+        # dan status draft
         return (
+
             obj.reporter == request.user
-            and obj.status == 'DRAFT'
+
+            and
+
+            obj.status == "DRAFT"
+
         )
