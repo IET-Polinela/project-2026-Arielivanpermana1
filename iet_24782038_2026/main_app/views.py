@@ -15,7 +15,12 @@ from django.http import JsonResponse
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
+
 from .models import Report
+from .serializers import ReportSerializer
 
 
 # ==========================================
@@ -209,7 +214,7 @@ class ReportDeleteView(LoginRequiredMixin, DeleteView):
 
 
 # ==========================================
-# UPDATE STATUS (ADMIN ONLY)
+# UPDATE STATUS
 # ==========================================
 
 class ReportUpdateStatusView(AdminRequiredMixin, View):
@@ -230,11 +235,6 @@ class ReportUpdateStatusView(AdminRequiredMixin, View):
 
             report.status = 'VERIFIED'
 
-            messages.success(
-                request,
-                "Status berhasil diubah ke VERIFIED."
-            )
-
         elif (
             report.status == 'VERIFIED' and
             new_status == 'IN_PROGRESS'
@@ -242,29 +242,12 @@ class ReportUpdateStatusView(AdminRequiredMixin, View):
 
             report.status = 'IN_PROGRESS'
 
-            messages.success(
-                request,
-                "Status berhasil diubah ke IN_PROGRESS."
-            )
-
         elif (
             report.status == 'IN_PROGRESS' and
             new_status == 'RESOLVED'
         ):
 
             report.status = 'RESOLVED'
-
-            messages.success(
-                request,
-                "Status berhasil diubah ke RESOLVED."
-            )
-
-        else:
-
-            messages.error(
-                request,
-                "Perubahan status tidak valid."
-            )
 
         report.save()
 
@@ -335,3 +318,73 @@ def report_detail_json(request, pk):
         ),
 
     })
+
+
+# ==========================================
+# API PAGINATION
+# ==========================================
+
+class ReportPagination(PageNumberPagination):
+
+    page_size = 10
+
+    page_size_query_param = 'page_size'
+
+    max_page_size = 100
+
+
+# ==========================================
+# REPORT API VIEWSET
+# ==========================================
+
+class ReportViewSet(viewsets.ModelViewSet):
+
+    serializer_class = ReportSerializer
+
+    permission_classes = [IsAuthenticated]
+
+    pagination_class = ReportPagination
+
+    def get_queryset(self):
+
+        user = self.request.user
+
+        queryset = Report.objects.all().order_by(
+            '-updated_at'
+        )
+
+        tab = self.request.query_params.get(
+            'tab',
+            None
+        )
+
+        if tab == 'my_reports':
+
+            queryset = queryset.filter(
+                reporter=user
+            )
+
+        elif tab == 'feed':
+
+            queryset = queryset.filter(
+                ~Q(reporter=user) &
+                ~Q(status='DRAFT')
+            )
+
+        else:
+
+            queryset = queryset.filter(
+                ~Q(status='DRAFT') |
+                Q(
+                    status='DRAFT',
+                    reporter=user
+                )
+            )
+
+        return queryset
+
+    def perform_create(self, serializer):
+
+        serializer.save(
+            reporter=self.request.user
+        )

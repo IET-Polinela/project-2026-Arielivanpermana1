@@ -1,260 +1,172 @@
 {% extends 'base.html' %}
 
+{% block title %}Daftar Laporan - IET City{% endblock %}
+
 {% block content %}
 
-<div class="container mt-4">
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'landing' %}">Home</a></li>
+        <li class="breadcrumb-item active">Reports</li>
+    </ol>
+</nav>
 
-    <!-- MESSAGE -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% endfor %}
+<div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+    <div>
+        <h1 class="section-heading h2 mb-1">Daftar Laporan</h1>
+        <p class="text-muted mb-0">Kelola dan pantau laporan masyarakat berdasarkan status terbaru.</p>
+    </div>
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'add_report' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>
+            Tambah Laporan
+        </a>
     {% endif %}
-
-    <!-- TITLE -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Daftar Laporan</h1>
-
-        {% if user.is_authenticated %}
-            <a href="{% url 'add_report' %}" class="btn btn-primary">
-                + Tambah Laporan
-            </a>
-        {% endif %}
-    </div>
-
-    <!-- SEARCH -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5>Live Search Laporan</h5>
-
-            <input
-                type="text"
-                id="search-input"
-                class="form-control"
-                placeholder="Cari judul, kategori, lokasi, atau status..."
-            >
-
-            <small class="text-muted">
-                Hasil pencarian muncul otomatis tanpa reload halaman.
-            </small>
-        </div>
-    </div>
-
-    <!-- TABLE -->
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle">
-
-            <thead class="table-dark">
-                <tr>
-                    <th>Judul</th>
-                    <th>Kategori</th>
-                    <th>Lokasi</th>
-                    <th>Status</th>
-                    <th width="350">Aksi</th>
-                </tr>
-            </thead>
-
-            <tbody id="report-table-body">
-
-                {% for report in reports %}
-                <tr>
-
-                    <!-- TITLE -->
-                    <td>{{ report.title }}</td>
-
-                    <!-- CATEGORY -->
-                    <td>{{ report.category }}</td>
-
-                    <!-- LOCATION -->
-                    <td>{{ report.location }}</td>
-
-                    <!-- STATUS -->
-                    <td>
-
-                        {% if report.status == 'DRAFT' %}
-                            <span class="badge bg-dark">Draft</span>
-
-                        {% elif report.status == 'REPORTED' %}
-                            <span class="badge bg-primary">Reported</span>
-
-                        {% elif report.status == 'VERIFIED' %}
-                            <span class="badge bg-info text-dark">Verified</span>
-
-                        {% elif report.status == 'IN_PROGRESS' %}
-                            <span class="badge bg-warning text-dark">In Progress</span>
-
-                        {% elif report.status == 'RESOLVED' %}
-                            <span class="badge bg-success">Resolved</span>
-
-                        {% endif %}
-
-                    </td>
-
-                    <!-- ACTION -->
-                    <td>
-
-                        <div class="d-flex flex-wrap gap-1">
-
-                            <!-- DETAIL MODAL -->
-                            <button
-                                class="btn btn-info btn-sm detail-btn"
-                                data-id="{{ report.id }}"
-                            >
-                                Detail Modal
-                            </button>
-
-                            <!-- DETAIL PAGE -->
-                            <a
-                                href="{% url 'detail_report' report.pk %}"
-                                class="btn btn-secondary btn-sm"
-                            >
-                                Detail Page
-                            </a>
-
-                            {% if user.is_admin %}
-
-                                <!-- EDIT -->
-                                <a
-                                    href="{% url 'edit_report' report.pk %}"
-                                    class="btn btn-warning btn-sm"
-                                >
-                                    Edit
-                                </a>
-
-                                <!-- DELETE -->
-                                <a
-                                    href="{% url 'delete_report' report.pk %}"
-                                    class="btn btn-danger btn-sm"
-                                >
-                                    Hapus
-                                </a>
-
-                                <!-- STATUS ACTION -->
-                                {% if report.status == 'REPORTED' %}
-
-                                    <form
-                                        method="POST"
-                                        action="{% url 'update_status' report.pk %}"
-                                    >
-                                        {% csrf_token %}
-
-                                        <input
-                                            type="hidden"
-                                            name="status"
-                                            value="VERIFIED"
-                                        >
-
-                                        <button
-                                            type="submit"
-                                            class="btn btn-primary btn-sm"
-                                        >
-                                            Verifikasi
-                                        </button>
-                                    </form>
-
-                                {% elif report.status == 'VERIFIED' %}
-
-                                    <form
-                                        method="POST"
-                                        action="{% url 'update_status' report.pk %}"
-                                    >
-                                        {% csrf_token %}
-
-                                        <input
-                                            type="hidden"
-                                            name="status"
-                                            value="IN_PROGRESS"
-                                        >
-
-                                        <button
-                                            type="submit"
-                                            class="btn btn-warning btn-sm"
-                                        >
-                                            Proses
-                                        </button>
-                                    </form>
-
-                                {% elif report.status == 'IN_PROGRESS' %}
-
-                                    <form
-                                        method="POST"
-                                        action="{% url 'update_status' report.pk %}"
-                                    >
-                                        {% csrf_token %}
-
-                                        <input
-                                            type="hidden"
-                                            name="status"
-                                            value="RESOLVED"
-                                        >
-
-                                        <button
-                                            type="submit"
-                                            class="btn btn-success btn-sm"
-                                        >
-                                            Selesaikan
-                                        </button>
-                                    </form>
-
-                                {% endif %}
-
-                            {% else %}
-
-                                {% if report.reporter == user %}
-
-                                    <!-- EDIT -->
-                                    <a
-                                        href="{% url 'edit_report' report.pk %}"
-                                        class="btn btn-warning btn-sm"
-                                    >
-                                        Edit
-                                    </a>
-
-                                    <!-- DELETE -->
-                                    <a
-                                        href="{% url 'delete_report' report.pk %}"
-                                        class="btn btn-danger btn-sm"
-                                    >
-                                        Hapus
-                                    </a>
-
-                                {% endif %}
-
-                            {% endif %}
-
-                        </div>
-
-                    </td>
-
-                </tr>
-                {% endfor %}
-
-            </tbody>
-
-        </table>
-    </div>
-
 </div>
 
-<!-- STYLE -->
-<style>
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3 align-items-center">
+            <div class="col-lg-4">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="icon-chip bg-primary-subtle text-primary">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <div>
+                        <h5 class="mb-0 fw-bold">Cari Laporan</h5>
+                        <small class="text-muted">Judul, kategori, lokasi, atau status</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <input
+                    type="text"
+                    id="search-input"
+                    class="form-control"
+                    placeholder="Cari laporan..."
+                >
+            </div>
+        </div>
+    </div>
+</div>
 
-    td {
-        vertical-align: middle;
-    }
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Judul</th>
+                        <th>Kategori</th>
+                        <th>Lokasi</th>
+                        <th>Status</th>
+                        <th width="350">Aksi</th>
+                    </tr>
+                </thead>
 
-    .table td,
-    .table th {
-        padding: 12px;
-    }
+                <tbody id="report-table-body">
 
-    .btn-sm {
-        font-size: 13px;
-    }
+                    {% for report in reports %}
+                    <tr>
+                        <td class="fw-semibold">{{ report.title }}</td>
+                        <td>{{ report.category }}</td>
+                        <td>{{ report.location }}</td>
+                        <td>
+                            {% if report.status == 'DRAFT' %}
+                                <span class="badge bg-dark">Draft</span>
+                            {% elif report.status == 'REPORTED' %}
+                                <span class="badge bg-primary">Reported</span>
+                            {% elif report.status == 'VERIFIED' %}
+                                <span class="badge bg-info text-dark">Verified</span>
+                            {% elif report.status == 'IN_PROGRESS' %}
+                                <span class="badge bg-warning text-dark">In Progress</span>
+                            {% elif report.status == 'RESOLVED' %}
+                                <span class="badge bg-success">Resolved</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button
+                                    class="btn btn-outline-primary btn-sm detail-btn"
+                                    data-id="{{ report.id }}"
+                                >
+                                    <i class="bi bi-window me-1"></i> Modal
+                                </button>
 
-</style>
+                                <a
+                                    href="{% url 'detail_report' report.pk %}"
+                                    class="btn btn-outline-secondary btn-sm"
+                                >
+                                    <i class="bi bi-eye me-1"></i> Detail
+                                </a>
+
+                                {% if user.is_admin %}
+                                    <a
+                                        href="{% url 'edit_report' report.pk %}"
+                                        class="btn btn-outline-warning btn-sm"
+                                    >
+                                        <i class="bi bi-pencil-square me-1"></i> Edit
+                                    </a>
+
+                                    <a
+                                        href="{% url 'delete_report' report.pk %}"
+                                        class="btn btn-outline-danger btn-sm"
+                                    >
+                                        <i class="bi bi-trash me-1"></i> Hapus
+                                    </a>
+
+                                    {% if report.status == 'REPORTED' %}
+                                        <form method="POST" action="{% url 'update_status' report.pk %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="VERIFIED">
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                Verifikasi
+                                            </button>
+                                        </form>
+                                    {% elif report.status == 'VERIFIED' %}
+                                        <form method="POST" action="{% url 'update_status' report.pk %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="IN_PROGRESS">
+                                            <button type="submit" class="btn btn-warning btn-sm">
+                                                Proses
+                                            </button>
+                                        </form>
+                                    {% elif report.status == 'IN_PROGRESS' %}
+                                        <form method="POST" action="{% url 'update_status' report.pk %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="RESOLVED">
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                Selesaikan
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                {% else %}
+                                    {% if report.reporter == user %}
+                                        <a
+                                            href="{% url 'edit_report' report.pk %}"
+                                            class="btn btn-outline-warning btn-sm"
+                                        >
+                                            <i class="bi bi-pencil-square me-1"></i> Edit
+                                        </a>
+
+                                        <a
+                                            href="{% url 'delete_report' report.pk %}"
+                                            class="btn btn-outline-danger btn-sm"
+                                        >
+                                            <i class="bi bi-trash me-1"></i> Hapus
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

@@ -14,12 +14,20 @@
     </ol>
 </nav>
 
-<h2 class="mb-4">Dashboard Statistik Laporan</h2>
+<div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+    <div>
+        <h2 class="section-heading mb-1">Dashboard Statistik Laporan</h2>
+        <p class="text-muted mb-0">Ringkasan status dan kategori laporan untuk pemantauan admin.</p>
+    </div>
+</div>
 
 <div class="row g-3 mb-4">
     <div class="col-md">
-        <div class="card shadow-sm border-0 rounded-4 text-center">
+        <div class="card metric-card h-100">
             <div class="card-body">
+                <span class="icon-chip mb-3">
+                    <i class="bi bi-files"></i>
+                </span>
                 <h6 class="text-muted">Total Laporan</h6>
                 <h3 id="totalReports" class="fw-bold">0</h3>
             </div>
@@ -27,8 +35,11 @@
     </div>
 
     <div class="col-md">
-        <div class="card shadow-sm border-0 rounded-4 text-center">
+        <div class="card metric-card h-100">
             <div class="card-body">
+                <span class="icon-chip mb-3">
+                    <i class="bi bi-send"></i>
+                </span>
                 <h6 class="text-muted">Reported</h6>
                 <h3 id="reportedCount" class="fw-bold text-secondary">0</h3>
             </div>
@@ -36,8 +47,11 @@
     </div>
 
     <div class="col-md">
-        <div class="card shadow-sm border-0 rounded-4 text-center">
+        <div class="card metric-card h-100">
             <div class="card-body">
+                <span class="icon-chip mb-3">
+                    <i class="bi bi-patch-check"></i>
+                </span>
                 <h6 class="text-muted">Verified</h6>
                 <h3 id="verifiedCount" class="fw-bold text-primary">0</h3>
             </div>
@@ -45,8 +59,11 @@
     </div>
 
     <div class="col-md">
-        <div class="card shadow-sm border-0 rounded-4 text-center">
+        <div class="card metric-card h-100">
             <div class="card-body">
+                <span class="icon-chip mb-3">
+                    <i class="bi bi-hourglass-split"></i>
+                </span>
                 <h6 class="text-muted">In Progress</h6>
                 <h3 id="progressCount" class="fw-bold text-warning">0</h3>
             </div>
@@ -54,8 +71,11 @@
     </div>
 
     <div class="col-md">
-        <div class="card shadow-sm border-0 rounded-4 text-center">
+        <div class="card metric-card h-100">
             <div class="card-body">
+                <span class="icon-chip mb-3">
+                    <i class="bi bi-check2-circle"></i>
+                </span>
                 <h6 class="text-muted">Resolved</h6>
                 <h3 id="resolvedCount" class="fw-bold text-success">0</h3>
             </div>
@@ -65,18 +85,18 @@
 
 <div class="row g-4">
     <div class="col-md-6">
-        <div class="card shadow-sm border-0 rounded-4">
+        <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Distribusi Status Laporan</h5>
+                <h5 class="card-title fw-bold">Distribusi Status Laporan</h5>
                 <canvas id="statusChart"></canvas>
             </div>
         </div>
     </div>
 
     <div class="col-md-6">
-        <div class="card shadow-sm border-0 rounded-4">
+        <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Distribusi Kategori Laporan</h5>
+                <h5 class="card-title fw-bold">Distribusi Kategori Laporan</h5>
                 <canvas id="categoryChart"></canvas>
             </div>
         </div>
@@ -85,12 +105,12 @@
 
 <div class="row g-4 mt-3">
     <div class="col-md-6">
-        <div class="card shadow-sm border-0 rounded-4">
+        <div class="card h-100">
             <div class="card-body">
-                <h5>5 Laporan Terbaru - REPORTED</h5>
+                <h5 class="fw-bold">5 Laporan Terbaru - REPORTED</h5>
                 <div class="table-responsive">
-                    <table class="table table-bordered align-middle">
-                        <thead class="table-dark">
+                    <table class="table table-hover align-middle">
+                        <thead>
                             <tr>
                                 <th>Judul</th>
                                 <th>Kategori</th>
@@ -105,12 +125,12 @@
     </div>
 
     <div class="col-md-6">
-        <div class="card shadow-sm border-0 rounded-4">
+        <div class="card h-100">
             <div class="card-body">
-                <h5>5 Laporan Terbaru - RESOLVED</h5>
+                <h5 class="fw-bold">5 Laporan Terbaru - RESOLVED</h5>
                 <div class="table-responsive">
-                    <table class="table table-bordered align-middle">
-                        <thead class="table-dark">
+                    <table class="table table-hover align-middle">
+                        <thead>
                             <tr>
                                 <th>Judul</th>
                                 <th>Kategori</th>
@@ -149,7 +169,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     labels: statusLabels,
                     datasets: [{
                         label: 'Jumlah Status',
-                        data: statusTotals
+                        data: statusTotals,
+                        backgroundColor: [
+                            '#0f5b8d',
+                            '#157f72',
+                            '#d9922e',
+                            '#c2413a',
+                            '#667085'
+                        ],
+                        borderWidth: 0
                     }]
                 }
             });
@@ -163,7 +191,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     labels: categoryLabels,
                     datasets: [{
                         label: 'Jumlah Kategori',
-                        data: categoryTotals
+                        data: categoryTotals,
+                        backgroundColor: '#0f5b8d',
+                        borderRadius: 8
                     }]
                 }
             });

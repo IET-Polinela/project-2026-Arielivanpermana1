@@ -1,79 +1,65 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Kontak Saya</title>
-    <style>
-        body{
-            font-family: Arial, sans-serif;
-            background:#f4f6f8;
-            text-align:center;
-            margin:0;
-        }
+{% extends 'base.html' %}
 
-        .container{
-            margin-top:120px;
-        }
+{% block title %}Contact - IET City{% endblock %}
 
-        h1{
-            color:#2c3e50;
-        }
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'landing' %}">Home</a></li>
+        <li class="breadcrumb-item active">Contact</li>
+    </ol>
+</nav>
 
-        p{
-            font-size:18px;
-            color:#555;
-        }
+<div class="card">
+    <div class="card-body p-4 p-lg-5">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <span class="icon-chip bg-success-subtle text-success">
+                <i class="bi bi-envelope-paper"></i>
+            </span>
+            <div>
+                <h1 class="section-heading h3 mb-1">Kontak Ariel Ivan Permana</h1>
+                <p class="text-muted mb-0">Informasi kontak dan repository project.</p>
+            </div>
+        </div>
 
-        a{
-            display:inline-block;
-            margin:10px;
-            padding:10px 20px;
-            text-decoration:none;
-            background:#e67e22;
-            color:white;
-            border-radius:6px;
-        }
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="border rounded-4 p-3 h-100 bg-white">
+                    <div class="fw-bold mb-1">
+                        <i class="bi bi-envelope me-1 text-primary"></i>
+                        Email
+                    </div>
+                    <div class="text-muted">arielivanprmn@gmail.com</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border rounded-4 p-3 h-100 bg-white">
+                    <div class="fw-bold mb-2">
+                        <i class="bi bi-whatsapp me-1 text-success"></i>
+                        WhatsApp
+                    </div>
+                    <a href="https://wa.me/6285155309884" target="_blank" class="btn btn-success btn-sm">
+                        Chat WhatsApp
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border rounded-4 p-3 h-100 bg-white">
+                    <div class="fw-bold mb-2">
+                        <i class="bi bi-github me-1"></i>
+                        GitHub
+                    </div>
+                    <a href="https://github.com/IET-Polinela/project-2026-Arielivanpermana1" target="_blank" class="btn btn-outline-primary btn-sm">
+                        Lihat GitHub Saya
+                    </a>
+                </div>
+            </div>
+        </div>
 
-        a:hover{
-            background:#ca6f1e;
-        }
-
-        .home{
-            background:#3498db;
-        }
-
-        .home:hover{
-            background:#2980b9;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="container">
-
-<h1>Kontak Ariel Ivan Permana</h1>
-
-<p><b>Email:</b> arielivanprmn@gmail.com</p>
-
-<p>
-<b>WhatsApp:</b><br>
-<a href="https://wa.me/6285155309884" target="_blank">
-Chat WhatsApp
-</a>
-</p>
-
-<p>
-<b>GitHub:</b><br>
-<a href="https://github.com/IET-Polinela/project-2026-Arielivanpermana1" target="_blank">
-Lihat GitHub Saya
-</a>
-</p>
-
-<br>
-
-<a class="home" href="/">Kembali ke Home</a>
-
+        <a class="btn btn-outline-secondary mt-4" href="/">
+            <i class="bi bi-arrow-left me-1"></i>
+            Kembali ke Home
+        </a>
+    </div>
 </div>
-
-</body>
-</html>
+{% endblock %}

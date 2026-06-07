@@ -11,11 +11,14 @@
     </ol>
 </nav>
 
-<div class="card shadow-sm border-0 rounded-4">
+<div class="card">
     <div class="card-body p-4 text-center">
-        <h2 class="mb-3 text-danger">Hapus Laporan</h2>
-        <p>Apakah yakin ingin menghapus laporan ini?</p>
-        <p class="fw-bold">{{ object.title }}</p>
+        <span class="icon-chip bg-danger-subtle text-danger mb-3">
+            <i class="bi bi-exclamation-triangle"></i>
+        </span>
+        <h2 class="section-heading h4 mb-2 text-danger">Hapus Laporan</h2>
+        <p class="text-muted mb-2">Apakah yakin ingin menghapus laporan ini?</p>
+        <p class="fw-bold fs-5">{{ object.title }}</p>
 
         <form method="post" class="loading-form">
             {% csrf_token %}
@@ -23,7 +26,7 @@
                     onclick="return confirm('Yakin ingin menghapus laporan ini?')">
                 Ya, Hapus
             </button>
-            <a href="{% url 'report_list' %}" class="btn btn-secondary">Batal</a>
+            <a href="{% url 'report_list' %}" class="btn btn-outline-secondary">Batal</a>
         </form>
     </div>
 </div>

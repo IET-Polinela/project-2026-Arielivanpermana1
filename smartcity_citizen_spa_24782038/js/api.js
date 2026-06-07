@@ -3,7 +3,9 @@ const BASE_URL =
 
 
 
-
+// ======================================
+// REQUEST API
+// ======================================
 
 async function requestAPI(
 
@@ -33,6 +35,7 @@ async function requestAPI(
 
 
 
+    // JWT token
     if (token) {
 
         options.headers.Authorization =
@@ -42,6 +45,7 @@ async function requestAPI(
 
 
 
+    // body
     if (bodyData) {
 
         options.body =
@@ -63,6 +67,23 @@ async function requestAPI(
 
 
 
+        // DELETE 204
+        if (
+            response.status === 204
+        ) {
+
+            return {
+
+                status: 204,
+
+                data: null
+
+            };
+
+        }
+
+
+
         const data =
             await response.json();
 
@@ -75,6 +96,7 @@ async function requestAPI(
 
             data:
                 data
+
         };
 
     }
@@ -90,6 +112,7 @@ async function requestAPI(
             status: 500,
 
             data: null
+
         };
 
     }
@@ -98,13 +121,20 @@ async function requestAPI(
 
 
 
+// ======================================
+// GET REPORTS
+// ======================================
 
-
-async function getReports() {
+async function getReports(
+    tab = "my_reports",
+    page = 1
+) {
 
     const response =
         await requestAPI(
-            "/api/report/"
+
+            `/api/report/?tab=${tab}&page=${page}`
+
         );
 
 
@@ -115,7 +145,9 @@ async function getReports() {
 
 
 
-
+// ======================================
+// CREATE REPORT
+// ======================================
 
 async function createReport(
     reportData

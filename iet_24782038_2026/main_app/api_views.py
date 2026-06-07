@@ -7,6 +7,7 @@ from rest_framework import (
 )
 
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from .models import Report
 from .serializers import ReportSerializer
@@ -15,6 +16,22 @@ from .permissions import (
 )
 
 
+# ======================================
+# PAGINATION
+# ======================================
+
+class ReportPagination(PageNumberPagination):
+
+    page_size = 10
+
+    page_size_query_param = 'page_size'
+
+    max_page_size = 1000
+
+
+# ======================================
+# REPORT VIEWSET
+# ======================================
 
 class ReportViewSet(
     viewsets.ModelViewSet
@@ -22,7 +39,7 @@ class ReportViewSet(
 
     serializer_class = ReportSerializer
 
-
+    pagination_class = ReportPagination
 
     # ======================================
     # QUERYSET
@@ -32,41 +49,55 @@ class ReportViewSet(
 
         user = self.request.user
 
-        # ADMIN
-        if user.is_admin:
+        queryset = Report.objects.all().order_by(
+            '-updated_at'
+        )
 
-            return Report.objects.all().order_by(
-                '-created_at'
+        tab = self.request.query_params.get(
+            'tab',
+            None
+        )
+
+        # ======================================
+        # MY REPORTS
+        # ======================================
+
+        if tab == 'my_reports':
+
+            return queryset.filter(
+                reporter=user
             )
 
+        # ======================================
+        # FEED KOTA
+        # ======================================
 
+        elif tab == 'feed':
 
-        # CITIZEN
-        # lihat:
-        # - semua non draft
-        # - draft milik sendiri
+            return queryset.filter(
 
-        return Report.objects.filter(
+                ~Q(reporter=user),
 
-            Q(
-                status__in=[
-                    'REPORTED',
-                    'VERIFIED',
-                    'IN_PROGRESS',
-                    'RESOLVED'
-                ]
+                ~Q(status='DRAFT')
+
             )
 
-            |
+        # ======================================
+        # DEFAULT
+        # ======================================
+
+        return queryset.filter(
 
             Q(
                 status='DRAFT',
                 reporter=user
             )
 
-        ).order_by('-created_at')
+            |
 
+            ~Q(status='DRAFT')
 
+        )
 
     # ======================================
     # PERMISSION
@@ -77,8 +108,6 @@ class ReportViewSet(
         permission_classes = [
             permissions.IsAuthenticated
         ]
-
-
 
         if (
 
@@ -98,63 +127,79 @@ class ReportViewSet(
                 IsOwnerAndDraftOrReadOnly
             )
 
-
-
         return [
+
             permission()
+
             for permission
+
             in permission_classes
         ]
 
+    # ======================================
+    # SERIALIZER CONTEXT
+    # ======================================
 
+    def get_serializer_context(self):
+
+        context = super().get_serializer_context()
+
+        context['request'] = self.request
+
+        return context
 
     # ======================================
     # CREATE
     # ======================================
 
     def perform_create(
+
         self,
+
         serializer
+
     ):
 
         serializer.save(
             reporter=self.request.user
         )
 
-
-
     # ======================================
     # DELETE
     # ======================================
 
     def destroy(
+
         self,
+
         request,
+
         *args,
+
         **kwargs
+
     ):
 
         report = self.get_object()
 
-
-
+        # ======================================
         # ADMIN
-        # boleh hapus semua
+        # ======================================
 
         if request.user.is_admin:
 
             return super().destroy(
+
                 request,
+
                 *args,
+
                 **kwargs
             )
 
-
-
+        # ======================================
         # CITIZEN
-        # hanya boleh hapus:
-        # - milik sendiri
-        # - status DRAFT
+        # ======================================
 
         if (
 
@@ -167,12 +212,13 @@ class ReportViewSet(
         ):
 
             return super().destroy(
+
                 request,
+
                 *args,
+
                 **kwargs
             )
-
-
 
         return Response(
 

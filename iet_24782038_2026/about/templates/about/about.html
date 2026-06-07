@@ -1,92 +1,57 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>About Me</title>
-    <style>
-        body{
-            font-family: Arial, sans-serif;
-            background:#ecf0f1;
-            margin:0;
-        }
+{% extends 'base.html' %}
 
-        .container{
-            width:60%;
-            margin:80px auto;
-            background:white;
-            padding:30px;
-            border-radius:10px;
-            box-shadow:0 4px 10px rgba(0,0,0,0.1);
-        }
+{% block title %}About - IET City{% endblock %}
 
-        h1{
-            text-align:center;
-            color:#2c3e50;
-        }
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'landing' %}">Home</a></li>
+        <li class="breadcrumb-item active">About</li>
+    </ol>
+</nav>
 
-        h2{
-            color:#34495e;
-            margin-top:30px;
-        }
+<div class="card">
+    <div class="card-body p-4 p-lg-5">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <span class="icon-chip bg-primary-subtle text-primary">
+                <i class="bi bi-person-badge"></i>
+            </span>
+            <div>
+                <h1 class="section-heading h3 mb-1">Data Pribadi Saya</h1>
+                <p class="text-muted mb-0">Profil singkat pemilik project.</p>
+            </div>
+        </div>
 
-        p{
-            font-size:17px;
-            color:#555;
-        }
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <h5 class="fw-bold">Informasi Pribadi</h5>
+                <dl class="row mb-0">
+                    <dt class="col-sm-5 text-muted">Nama</dt>
+                    <dd class="col-sm-7">Ariel Ivan Permana</dd>
 
-        ul{
-            text-align:left;
-            margin-left:40px;
-        }
+                    <dt class="col-sm-5 text-muted">Tempat, Tanggal Lahir</dt>
+                    <dd class="col-sm-7">Srikuncoro, 21 April 2006</dd>
 
-        li{
-            margin:8px 0;
-            font-size:16px;
-        }
+                    <dt class="col-sm-5 text-muted">Tempat Tinggal</dt>
+                    <dd class="col-sm-7">Sripurnomo, Kecamatan Semaka, Kabupaten Tanggamus</dd>
+                </dl>
+            </div>
 
-        .home{
-            display:block;
-            text-align:center;
-            margin-top:30px;
-            text-decoration:none;
-            background:#3498db;
-            color:white;
-            padding:12px;
-            border-radius:6px;
-            width:180px;
-            margin-left:auto;
-            margin-right:auto;
-        }
+            <div class="col-lg-6">
+                <h5 class="fw-bold">Riwayat Pendidikan</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item px-0">SDN 1 Sripurnomo</li>
+                    <li class="list-group-item px-0">SMP PGRI 1 Semaka</li>
+                    <li class="list-group-item px-0">SMK Yadika Pagelaran</li>
+                    <li class="list-group-item px-0">Politeknik Negeri Lampung</li>
+                </ul>
+            </div>
+        </div>
 
-        .home:hover{
-            background:#2980b9;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="container">
-
-<h1>Data Pribadi saya</h1>
-
-<h2>Informasi Pribadi</h2>
-
-<p><b>Nama:</b> Ariel Ivan Permana</p>
-<p><b>Tempat, Tanggal Lahir:</b> Srikuncoro, 21 April 2006</p>
-<p><b>Tempat Tinggal:</b> Sripurnomo, Kecamatan Semaka, Kabupaten Tanggamus</p>
-
-<h2>Riwayat Pendidikan</h2>
-
-<ul>
-<li>SD : SDN 1 Sripurnomo</li>
-<li>SMP : SMP PGRI 1 Semaka</li>
-<li>SMK : SMK Yadika Pagelaran</li>
-<li>Kuliah : Politeknik Negeri Lampung</li>
-</ul>
-
-<a class="home" href="/">Kembali ke Home</a>
-
+        <a class="btn btn-outline-secondary mt-4" href="/">
+            <i class="bi bi-arrow-left me-1"></i>
+            Kembali ke Home
+        </a>
+    </div>
 </div>
-
-</body>
-</html>
+{% endblock %}

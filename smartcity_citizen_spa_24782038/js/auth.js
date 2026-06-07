@@ -1,114 +1,163 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+// ======================================
+// SAVE TOKEN
+// ======================================
 
+function saveToken(
+    access,
+    refresh
+) {
 
+    localStorage.setItem(
+        "access_token",
+        access
+    );
 
-function saveToken(access, refresh) {
-
-    localStorage.setItem("access_token", access);
-
-    localStorage.setItem("refresh_token", refresh);
+    localStorage.setItem(
+        "refresh_token",
+        refresh
+    );
 
 }
 
 
+// ======================================
+// GET TOKEN
+// ======================================
 
 function getAccessToken() {
 
-    return localStorage.getItem("access_token");
+    return localStorage.getItem(
+        "access_token"
+    );
 
 }
 
 
+// ======================================
+// LOGOUT
+// ======================================
 
 function logout() {
 
-    localStorage.removeItem("access_token");
+    localStorage.removeItem(
+        "access_token"
+    );
 
-    localStorage.removeItem("refresh_token");
+    localStorage.removeItem(
+        "refresh_token"
+    );
 
-    window.location.hash = "#login";
+    alert(
+        "Logout berhasil"
+    );
+
+    location.reload();
 
 }
 
 
+// ======================================
+// LOGIN
+// ======================================
 
-async function login(username, password) {
+async function login(
+    username,
+    password
+) {
 
     try {
 
-        const response = await fetch(
-            `${API_BASE_URL}/api/token/`,
+        const response = await requestAPI(
+
+            "/api/token/",
+
+            "POST",
+
             {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    username,
-                    password
-                })
+                username,
+                password
             }
         );
 
 
 
-        const data = await response.json();
+        if (response.status !== 200) {
 
+            alert(
+                "Login gagal!"
+            );
 
+            console.log(
+                response.data
+            );
 
-        if (!response.ok) {
-
-            alert("Login gagal!");
-
-            console.log(data);
-
-            return;
+            return false;
 
         }
 
 
 
         saveToken(
-            data.access,
-            data.refresh
+
+            response.data.access,
+
+            response.data.refresh
+
         );
 
 
 
-        alert("Login berhasil!");
+        alert(
+            "Login berhasil!"
+        );
 
 
 
-        window.location.hash = "#dashboard";
+        window.location.hash =
+            "#dashboard";
+
+
+
+        return true;
 
     }
 
     catch (error) {
 
-        console.log(error);
+        console.log(
+            error
+        );
 
-        alert("Terjadi error!");
+        alert(
+            "Terjadi error!"
+        );
+
+        return false;
 
     }
 
 }
 
 
+// ======================================
+// SETUP LOGIN FORM
+// ======================================
 
 function setupLoginForm() {
 
-    const form = document.getElementById("loginForm");
-
-
+    const form =
+        document.getElementById(
+            "loginForm"
+        );
 
     if (!form) return;
 
 
 
     form.addEventListener(
+
         "submit",
+
         async function (e) {
 
             e.preventDefault();
@@ -116,10 +165,18 @@ function setupLoginForm() {
 
 
             const username =
-                document.getElementById("username").value;
+
+                document.getElementById(
+                    "username"
+                ).value;
+
+
 
             const password =
-                document.getElementById("password").value;
+
+                document.getElementById(
+                    "password"
+                ).value;
 
 
 
@@ -129,6 +186,7 @@ function setupLoginForm() {
             );
 
         }
+
     );
 
 }
