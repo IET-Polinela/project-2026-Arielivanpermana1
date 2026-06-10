@@ -1,6 +1,22 @@
 from rest_framework.permissions import BasePermission
 
 
+def is_app_admin(user):
+
+    return (
+
+        getattr(user, 'is_admin', False)
+
+        or
+
+        getattr(user, 'is_staff', False)
+
+        or
+
+        getattr(user, 'is_superuser', False)
+    )
+
+
 class IsOwnerAndDraftOrReadOnly(
     BasePermission
 ):
@@ -21,7 +37,7 @@ class IsOwnerAndDraftOrReadOnly(
             return True
 
         # ADMIN hanya boleh mengubah status.
-        if request.user.is_admin:
+        if is_app_admin(request.user):
 
             return (
 

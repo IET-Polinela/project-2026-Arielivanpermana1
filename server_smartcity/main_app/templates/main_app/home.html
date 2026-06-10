@@ -17,7 +17,7 @@
         <p class="text-muted mb-0">Kelola dan pantau laporan masyarakat berdasarkan status terbaru.</p>
     </div>
 
-    {% if user.is_authenticated and not user.is_admin %}
+    {% if user.is_authenticated and not user.is_admin and not user.is_staff and not user.is_superuser %}
         <a href="{% url 'add_report' %}" class="btn btn-primary">
             <i class="bi bi-plus-circle me-1"></i>
             Tambah Laporan
@@ -101,7 +101,7 @@
                                     <i class="bi bi-eye me-1"></i> Detail
                                 </a>
 
-                                {% if user.is_admin %}
+                                {% if user.is_admin or user.is_staff or user.is_superuser %}
                                     {% if report.status == 'REPORTED' %}
                                         <form method="POST" action="{% url 'update_status' report.pk %}">
                                             {% csrf_token %}

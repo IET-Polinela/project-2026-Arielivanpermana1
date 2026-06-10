@@ -16,6 +16,22 @@ from .permissions import (
 )
 
 
+def is_app_admin(user):
+
+    return (
+
+        getattr(user, 'is_admin', False)
+
+        or
+
+        getattr(user, 'is_staff', False)
+
+        or
+
+        getattr(user, 'is_superuser', False)
+    )
+
+
 # ======================================
 # PAGINATION
 # ======================================
@@ -64,6 +80,14 @@ class ReportViewSet(
 
                 |
 
+                Q(reporter__is_staff=True)
+
+                |
+
+                Q(reporter__is_superuser=True)
+
+                |
+
                 Q(reporter__isnull=True)
             )
         )
@@ -72,7 +96,7 @@ class ReportViewSet(
             public_filter
         )
 
-        if user.is_admin:
+        if is_app_admin(user):
 
             return queryset.exclude(
                 status='DRAFT'
@@ -109,10 +133,7 @@ class ReportViewSet(
 
         return queryset.filter(
 
-            Q(
-                status='DRAFT',
-                reporter=user
-            )
+            Q(reporter=user)
 
             |
 
@@ -181,7 +202,7 @@ class ReportViewSet(
 
     ):
 
-        if request.user.is_admin:
+        if is_app_admin(request.user):
 
             return Response(
 
@@ -230,7 +251,7 @@ class ReportViewSet(
 
     ):
 
-        if request.user.is_admin:
+        if is_app_admin(request.user):
 
             kwargs['partial'] = True
 
@@ -261,7 +282,7 @@ class ReportViewSet(
 
         report = self.get_object()
 
-        if request.user.is_admin:
+        if is_app_admin(request.user):
 
             return Response(
 

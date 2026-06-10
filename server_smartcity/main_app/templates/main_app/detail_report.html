@@ -57,7 +57,7 @@
 
         <a href="{% url 'report_list' %}" class="btn btn-outline-secondary">Kembali</a>
 
-        {% if user.is_admin %}
+        {% if user.is_admin or user.is_staff or user.is_superuser %}
             {% if report.status == 'REPORTED' %}
                 <form method="POST" action="{% url 'update_status' report.pk %}" class="d-inline">
                     {% csrf_token %}

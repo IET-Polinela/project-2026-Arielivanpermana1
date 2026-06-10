@@ -27,38 +27,62 @@ from .serializers import ReportSerializer
 # REPORT ACCESS RULES
 # ==========================================
 
+def is_app_admin(user):
+
+    return (
+
+        getattr(user, 'is_admin', False)
+
+        or
+
+        getattr(user, 'is_staff', False)
+
+        or
+
+        getattr(user, 'is_superuser', False)
+    )
+
+
 def visible_reports_for(user):
 
     queryset = Report.objects.all()
 
-    if user.is_admin:
+    if is_app_admin(user):
 
         return queryset.exclude(
             status='DRAFT'
         )
 
+    public_filter = (
+
+        ~Q(status='DRAFT')
+
+        &
+
+        (
+            Q(reporter__is_admin=True)
+
+            |
+
+            Q(reporter__is_staff=True)
+
+            |
+
+            Q(reporter__is_superuser=True)
+
+            |
+
+            Q(reporter__isnull=True)
+        )
+    )
+
     return queryset.filter(
 
-        Q(
-            status='DRAFT',
-            reporter=user
-        )
+        Q(reporter=user)
 
         |
 
-        (
-            ~Q(status='DRAFT')
-
-            &
-
-            (
-                Q(reporter__is_admin=True)
-
-                |
-
-                Q(reporter__isnull=True)
-            )
-        )
+        public_filter
     )
 
 
@@ -79,7 +103,7 @@ class AdminRequiredMixin:
 
             return redirect('login')
 
-        if not request.user.is_admin:
+        if not is_app_admin(request.user):
 
             messages.error(
                 request,
@@ -167,7 +191,7 @@ class ReportCreateView(LoginRequiredMixin, CreateView):
 
     def dispatch(self, request, *args, **kwargs):
 
-        if request.user.is_admin:
+        if is_app_admin(request.user):
 
             messages.error(
                 request,
