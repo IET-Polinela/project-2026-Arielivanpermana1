@@ -53,6 +53,31 @@ class ReportViewSet(
             '-updated_at'
         )
 
+        public_filter = (
+
+            ~Q(status='DRAFT')
+
+            &
+
+            (
+                Q(reporter__is_admin=True)
+
+                |
+
+                Q(reporter__isnull=True)
+            )
+        )
+
+        public_queryset = queryset.filter(
+            public_filter
+        )
+
+        if user.is_admin:
+
+            return queryset.exclude(
+                status='DRAFT'
+            )
+
         tab = self.request.query_params.get(
             'tab',
             None
@@ -74,12 +99,8 @@ class ReportViewSet(
 
         elif tab == 'feed':
 
-            return queryset.filter(
-
-                ~Q(reporter=user),
-
-                ~Q(status='DRAFT')
-
+            return public_queryset.exclude(
+                reporter=user
             )
 
         # ======================================
@@ -95,7 +116,7 @@ class ReportViewSet(
 
             |
 
-            ~Q(status='DRAFT')
+            public_filter
 
         )
 
@@ -116,10 +137,6 @@ class ReportViewSet(
                 'partial_update',
                 'destroy'
             ]
-
-            and
-
-            not self.request.user.is_admin
 
         ):
 
@@ -152,6 +169,39 @@ class ReportViewSet(
     # CREATE
     # ======================================
 
+    def create(
+
+        self,
+
+        request,
+
+        *args,
+
+        **kwargs
+
+    ):
+
+        if request.user.is_admin:
+
+            return Response(
+
+                {
+                    "detail":
+                    "Admin tidak boleh membuat laporan."
+                },
+
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        return super().create(
+
+            request,
+
+            *args,
+
+            **kwargs
+        )
+
     def perform_create(
 
         self,
@@ -162,6 +212,35 @@ class ReportViewSet(
 
         serializer.save(
             reporter=self.request.user
+        )
+
+    # ======================================
+    # UPDATE
+    # ======================================
+
+    def update(
+
+        self,
+
+        request,
+
+        *args,
+
+        **kwargs
+
+    ):
+
+        if request.user.is_admin:
+
+            kwargs['partial'] = True
+
+        return super().update(
+
+            request,
+
+            *args,
+
+            **kwargs
         )
 
     # ======================================
@@ -182,19 +261,16 @@ class ReportViewSet(
 
         report = self.get_object()
 
-        # ======================================
-        # ADMIN
-        # ======================================
-
         if request.user.is_admin:
 
-            return super().destroy(
+            return Response(
 
-                request,
+                {
+                    "detail":
+                    "Admin hanya boleh mengubah status laporan."
+                },
 
-                *args,
-
-                **kwargs
+                status=status.HTTP_403_FORBIDDEN
             )
 
         # ======================================

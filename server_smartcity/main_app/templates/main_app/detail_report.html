@@ -57,13 +57,41 @@
 
         <a href="{% url 'report_list' %}" class="btn btn-outline-secondary">Kembali</a>
 
-        <a href="{% url 'edit_report' report.id %}" class="btn btn-warning text-dark">
-            <i class="bi bi-pencil-square me-1"></i> Edit
-        </a>
+        {% if user.is_admin %}
+            {% if report.status == 'REPORTED' %}
+                <form method="POST" action="{% url 'update_status' report.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="VERIFIED">
+                    <button type="submit" class="btn btn-primary">
+                        Verifikasi
+                    </button>
+                </form>
+            {% elif report.status == 'VERIFIED' %}
+                <form method="POST" action="{% url 'update_status' report.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="IN_PROGRESS">
+                    <button type="submit" class="btn btn-warning text-dark">
+                        Proses
+                    </button>
+                </form>
+            {% elif report.status == 'IN_PROGRESS' %}
+                <form method="POST" action="{% url 'update_status' report.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="RESOLVED">
+                    <button type="submit" class="btn btn-success">
+                        Selesaikan
+                    </button>
+                </form>
+            {% endif %}
+        {% elif report.reporter == user and report.status == 'DRAFT' %}
+            <a href="{% url 'edit_report' report.id %}" class="btn btn-warning text-dark">
+                <i class="bi bi-pencil-square me-1"></i> Edit
+            </a>
 
-        <a href="{% url 'delete_report' report.id %}" class="btn btn-danger">
-            <i class="bi bi-trash me-1"></i> Hapus
-        </a>
+            <a href="{% url 'delete_report' report.id %}" class="btn btn-danger">
+                <i class="bi bi-trash me-1"></i> Hapus
+            </a>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

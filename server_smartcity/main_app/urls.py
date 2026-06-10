@@ -1,5 +1,4 @@
 from django.urls import path
-from rest_framework.routers import DefaultRouter
 
 from .views import (
     LandingPageView,
@@ -10,16 +9,7 @@ from .views import (
     ReportDeleteView,
     ReportUpdateStatusView,
     live_search_reports,
-    report_detail_json,
-    ReportViewSet
-)
-
-router = DefaultRouter()
-
-router.register(
-    r'api/report',
-    ReportViewSet,
-    basename='api-report'
+    report_detail_json
 )
 
 urlpatterns = [
@@ -74,5 +64,3 @@ urlpatterns = [
         name='report_detail_json'
     ),
 ]
-
-urlpatterns += router.urls

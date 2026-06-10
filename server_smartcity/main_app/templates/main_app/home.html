@@ -17,7 +17,7 @@
         <p class="text-muted mb-0">Kelola dan pantau laporan masyarakat berdasarkan status terbaru.</p>
     </div>
 
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and not user.is_admin %}
         <a href="{% url 'add_report' %}" class="btn btn-primary">
             <i class="bi bi-plus-circle me-1"></i>
             Tambah Laporan
@@ -102,20 +102,6 @@
                                 </a>
 
                                 {% if user.is_admin %}
-                                    <a
-                                        href="{% url 'edit_report' report.pk %}"
-                                        class="btn btn-outline-warning btn-sm"
-                                    >
-                                        <i class="bi bi-pencil-square me-1"></i> Edit
-                                    </a>
-
-                                    <a
-                                        href="{% url 'delete_report' report.pk %}"
-                                        class="btn btn-outline-danger btn-sm"
-                                    >
-                                        <i class="bi bi-trash me-1"></i> Hapus
-                                    </a>
-
                                     {% if report.status == 'REPORTED' %}
                                         <form method="POST" action="{% url 'update_status' report.pk %}">
                                             {% csrf_token %}
@@ -142,7 +128,7 @@
                                         </form>
                                     {% endif %}
                                 {% else %}
-                                    {% if report.reporter == user %}
+                                    {% if report.reporter == user and report.status == 'DRAFT' %}
                                         <a
                                             href="{% url 'edit_report' report.pk %}"
                                             class="btn btn-outline-warning btn-sm"

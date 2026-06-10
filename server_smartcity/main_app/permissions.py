@@ -20,9 +20,22 @@ class IsOwnerAndDraftOrReadOnly(
         ]:
             return True
 
-        # ADMIN boleh semua
+        # ADMIN hanya boleh mengubah status.
         if request.user.is_admin:
-            return True
+
+            return (
+
+                request.method in [
+                    "PUT",
+                    "PATCH"
+                ]
+
+                and
+
+                set(request.data.keys()) == {
+                    "status"
+                }
+            )
 
         # CITIZEN:
         # hanya milik sendiri

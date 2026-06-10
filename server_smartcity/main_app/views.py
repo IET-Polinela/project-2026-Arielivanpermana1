@@ -24,6 +24,45 @@ from .serializers import ReportSerializer
 
 
 # ==========================================
+# REPORT ACCESS RULES
+# ==========================================
+
+def visible_reports_for(user):
+
+    queryset = Report.objects.all()
+
+    if user.is_admin:
+
+        return queryset.exclude(
+            status='DRAFT'
+        )
+
+    return queryset.filter(
+
+        Q(
+            status='DRAFT',
+            reporter=user
+        )
+
+        |
+
+        (
+            ~Q(status='DRAFT')
+
+            &
+
+            (
+                Q(reporter__is_admin=True)
+
+                |
+
+                Q(reporter__isnull=True)
+            )
+        )
+    )
+
+
+# ==========================================
 # ADMIN MIXIN
 # ==========================================
 
@@ -77,6 +116,12 @@ class ReportListView(LoginRequiredMixin, ListView):
 
     login_url = 'login'
 
+    def get_queryset(self):
+
+        return visible_reports_for(
+            self.request.user
+        ).order_by('-created_at')
+
 
 # ==========================================
 # DETAIL REPORT
@@ -91,6 +136,12 @@ class ReportDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'report'
 
     login_url = 'login'
+
+    def get_queryset(self):
+
+        return visible_reports_for(
+            self.request.user
+        )
 
 
 # ==========================================
@@ -113,6 +164,23 @@ class ReportCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('report_list')
 
     login_url = 'login'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        if request.user.is_admin:
+
+            messages.error(
+                request,
+                "Admin tidak boleh membuat laporan."
+            )
+
+            return redirect('report_list')
+
+        return super().dispatch(
+            request,
+            *args,
+            **kwargs
+        )
 
     def form_valid(self, form):
 
@@ -149,15 +217,28 @@ class ReportUpdateView(LoginRequiredMixin, UpdateView):
 
     login_url = 'login'
 
+    def get_queryset(self):
+
+        return Report.objects.filter(
+            reporter=self.request.user,
+            status='DRAFT'
+        )
+
     def dispatch(self, request, *args, **kwargs):
 
         report = self.get_object()
 
-        if report.reporter != request.user:
+        if (
+            report.reporter != request.user
+
+            or
+
+            report.status != 'DRAFT'
+        ):
 
             messages.error(
                 request,
-                "Anda tidak memiliki izin untuk mengedit laporan ini."
+                "Hanya laporan draft milik sendiri yang bisa diedit."
             )
 
             return redirect('report_list')
@@ -188,15 +269,28 @@ class ReportDeleteView(LoginRequiredMixin, DeleteView):
 
     login_url = 'login'
 
+    def get_queryset(self):
+
+        return Report.objects.filter(
+            reporter=self.request.user,
+            status='DRAFT'
+        )
+
     def dispatch(self, request, *args, **kwargs):
 
         report = self.get_object()
 
-        if report.reporter != request.user:
+        if (
+            report.reporter != request.user
+
+            or
+
+            report.status != 'DRAFT'
+        ):
 
             messages.error(
                 request,
-                "Anda tidak memiliki izin untuk menghapus laporan ini."
+                "Hanya laporan draft milik sendiri yang bisa dihapus."
             )
 
             return redirect('report_list')
@@ -222,7 +316,9 @@ class ReportUpdateStatusView(AdminRequiredMixin, View):
     def post(self, request, pk):
 
         report = get_object_or_404(
-            Report,
+            Report.objects.exclude(
+                status='DRAFT'
+            ),
             pk=pk
         )
 
@@ -262,7 +358,7 @@ def live_search_reports(request):
 
     keyword = request.GET.get('q', '')
 
-    reports = Report.objects.filter(
+    reports = visible_reports_for(request.user).filter(
 
         Q(title__icontains=keyword) |
         Q(category__icontains=keyword) |
@@ -295,7 +391,7 @@ def live_search_reports(request):
 def report_detail_json(request, pk):
 
     report = get_object_or_404(
-        Report,
+        visible_reports_for(request.user),
         pk=pk
     )
 
