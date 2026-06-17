@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     # Third Party Apps
     'rest_framework',
     'rest_framework_simplejwt',
+    'drf_spectacular',
+    'django_scalar',
     'corsheaders',
 
     # Local Apps
@@ -120,6 +122,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # DRF JWT Authentication
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
@@ -139,5 +143,13 @@ SIMPLE_JWT = {
 #CORS SETTINGS
 CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ['http://103.151.63.85:8006']
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Smart City Portal API',
+    'DESCRIPTION': 'Dokumentasi REST API resmi untuk Portal Pelaporan Laporan Warga',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

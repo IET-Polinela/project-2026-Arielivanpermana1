@@ -6,6 +6,12 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+)
+from django_scalar.views import scalar_viewer
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 
@@ -16,6 +22,15 @@ urlpatterns = [
     path('dashboard/', include('dashboard_24782038.urls')),
 
     path('api/', include('main_app.api_urls')),
+
+    # OpenAPI Documentation
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path(
+        'api/docs/swagger/',
+        SpectacularSwaggerView.as_view(url_name='schema'),
+        name='swagger-ui'
+    ),
+    path('api/docs/scalar/', scalar_viewer, name='scalar-ui'),
 
     # JWT Authentication
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
