@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
+from drf_spectacular.utils import extend_schema
 
 from .forms import RegisterForm
 from .models import User
@@ -67,6 +68,7 @@ def register_view(request):
 # API REGISTER VIEW (LAB 10)
 # =========================
 
+@extend_schema(exclude=True)
 class RegisterAPIView(generics.CreateAPIView):
 
     queryset = User.objects.all()
