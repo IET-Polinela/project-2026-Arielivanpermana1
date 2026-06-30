@@ -47,6 +47,10 @@ def visible_reports_for(user):
 
     queryset = Report.objects.all()
 
+    if not getattr(user, 'is_authenticated', False):
+
+        return queryset.none()
+
     if is_app_admin(user):
 
         return queryset.exclude(
@@ -243,12 +247,20 @@ class ReportUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_queryset(self):
 
+        if not self.request.user.is_authenticated:
+
+            return Report.objects.none()
+
         return Report.objects.filter(
             reporter=self.request.user,
             status='DRAFT'
         )
 
     def dispatch(self, request, *args, **kwargs):
+
+        if not request.user.is_authenticated:
+
+            return super().dispatch(request, *args, **kwargs)
 
         report = self.get_object()
 
@@ -295,12 +307,20 @@ class ReportDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
 
+        if not self.request.user.is_authenticated:
+
+            return Report.objects.none()
+
         return Report.objects.filter(
             reporter=self.request.user,
             status='DRAFT'
         )
 
     def dispatch(self, request, *args, **kwargs):
+
+        if not request.user.is_authenticated:
+
+            return super().dispatch(request, *args, **kwargs)
 
         report = self.get_object()
 

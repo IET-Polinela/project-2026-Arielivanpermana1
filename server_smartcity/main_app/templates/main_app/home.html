@@ -155,4 +155,52 @@
     </div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('search-input');
+    const tableBody = document.getElementById('report-table-body');
+
+    if (!searchInput || !tableBody) {
+        return;
+    }
+
+    const statusBadge = function (status) {
+        const badges = {
+            DRAFT: 'bg-dark',
+            REPORTED: 'bg-primary',
+            VERIFIED: 'bg-info text-dark',
+            IN_PROGRESS: 'bg-warning text-dark',
+            RESOLVED: 'bg-success'
+        };
+
+        return `<span class="badge ${badges[status] || 'bg-secondary'}">${status}</span>`;
+    };
+
+    const renderRows = function (reports) {
+        tableBody.innerHTML = reports.map(function (report) {
+            return `
+                <tr>
+                    <td class="fw-semibold">${report.title}</td>
+                    <td>${report.category}</td>
+                    <td>${report.location}</td>
+                    <td>${statusBadge(report.status)}</td>
+                    <td>
+                        <a href="/detail/${report.id}/" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-eye me-1"></i> Detail
+                        </a>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    };
+
+    searchInput.addEventListener('input', async function () {
+        const keyword = searchInput.value;
+        const response = await fetch(`/ajax/live-search/?q=${encodeURIComponent(keyword)}`);
+        const data = await response.json();
+        renderRows(data.reports || []);
+    });
+});
+</script>
+
 {% endblock %}

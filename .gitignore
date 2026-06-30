@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+
+node_modules/
+test-results/
+
+server_smartcity/.coverage
+server_smartcity/test_db.sqlite3
+server_smartcity/smartcity_app/local_settings.py
